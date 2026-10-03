@@ -15,6 +15,7 @@ const pressure = document.getElementById("pressure");
 const visibility = document.getElementById("visibility");
 const minTemp = document.getElementById("minTemp");
 const maxTemp = document.getElementById("maxTemp");
+
 async function getWeather() {
 
     const city = cityInput.value;
@@ -24,50 +25,33 @@ async function getWeather() {
         return;
     }
 
-    const apiKey = "YOUR_API_KEY";
-
-
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-    console.log(url);
+    const url = `http://localhost:3000/weather?city=${encodeURIComponent(city)}`;
 
     loading.textContent = "Loading...";
 
-   try {
-    const response = await fetch(url);
-    const result = await response.json();
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
 
-    loading.textContent = "";
+        loading.textContent = "";
 
-    if (!response.ok) {
-        error.textContent = "City not found!";
-        return;
+        if (!response.ok) {
+            error.textContent = "City not found!";
+            return;
+        }
+
+        error.textContent = "";
+        weatherCard.style.display = "block";
+
+        displayWeather(result);
+
+    } catch (err) {
+        loading.textContent = "";
+        error.textContent = "Something went wrong. Check your internet connection.";
+        console.error(err);
     }
-
-    error.textContent = "";
-    weatherCard.style.display = "block";
-
-    displayWeather(result);
-
-} catch (err) {
-    loading.textContent = "";
-    error.textContent = "Something went wrong. Check your internet connection.";
-    console.error(err);
 }
-    loading.textContent = "";
 
-    if (!response.ok) {
-        error.textContent = "City not found!";
-        return;
-    }
-
-    error.textContent = "";
-    weatherCard.style.display = "block";
-
-    displayWeather(result);
-
-    console.log(result);
-}
 searchBtn.addEventListener("click", getWeather);
 
 cityInput.addEventListener("keydown", function(event) {
@@ -77,25 +61,25 @@ cityInput.addEventListener("keydown", function(event) {
 });
 
 function displayWeather(result) {
-temperature.textContent =  result.main.temp + " °C";
-humidity.textContent = "Humidity:" + result.main.humidity + "%";
-wind.textContent = "Wind Speed:" + result.wind.speed + " m/s";
-feelsLike.textContent = "Feels like: " + result.main.feels_like + " °C";
 
-pressure.textContent = "Pressure: " + result.main.pressure + " hPa";
+    cityName.textContent = result.name;
+    temperature.textContent = result.main.temp + " °C";
+    description.textContent = result.weather[0].description;
+    humidity.textContent = "Humidity: " + result.main.humidity + "%";
+    wind.textContent = "Wind Speed: " + result.wind.speed + " m/s";
+    feelsLike.textContent = "Feels like: " + result.main.feels_like + " °C";
+    pressure.textContent = "Pressure: " + result.main.pressure + " hPa";
+    visibility.textContent = "Visibility: " + (result.visibility / 1000) + " km";
+    minTemp.textContent = "Min temperature: " + result.main.temp_min + " °C";
+    maxTemp.textContent = "Max temperature: " + result.main.temp_max + " °C";
 
-visibility.textContent = "Visibility: " + (result.visibility / 1000) + " km";
-
-minTemp.textContent = "Min temperature: " + result.main.temp_min + " °C";
-
-maxTemp.textContent = "Max temperature: " + result.main.temp_max + " °C";
-const iconCode = result.weather[0].icon;
+    const iconCode = result.weather[0].icon;
 
     weatherIcon.src =
         `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 }
 
-clearBtn.addEventListener("click", function () {
+clearBtn.addEventListener("click", function() {
 
     cityInput.value = "";
 
@@ -114,4 +98,3 @@ clearBtn.addEventListener("click", function () {
     error.textContent = "";
     loading.textContent = "";
 });
-displayWeather(result);
