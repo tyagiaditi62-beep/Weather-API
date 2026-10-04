@@ -24,7 +24,7 @@ async function getWeather() {
         error.textContent = "Please enter a city name!";
         return;
     }
-const url = `https://weather-kf7u9cyig-poyoyi.vercel.app/weather?city=${encodeURIComponent(city)}`;
+const url = `https://weather-api-poyoyi.vercel.app/weather?city=${encodeURIComponent(city)}`;
 
     loading.textContent = "Loading...";
 
