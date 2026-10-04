@@ -4,8 +4,9 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
-
+app.use(cors({
+    origin: "https://tyagiaditi62-beep.github.io"
+}));
 app.get("/weather", async (req, res) => {
 
     const city = req.query.city;
